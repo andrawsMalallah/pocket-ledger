@@ -1,0 +1,79 @@
+workflows:
+  create-signing-key:
+    name: One-time Android signing key
+    instance_type: mac_mini_m2
+    max_build_duration: 15
+    environment:
+      java: 17
+      groups:
+        - signing_setup
+    scripts:
+      - name: Generate a password-protected release keystore
+        script: |
+          set -euo pipefail
+          test "${#NEW_KEYSTORE_PASSWORD}" -ge 12
+          keytool -genkeypair -v -keystore pocket-ledger-release.jks \
+            -storetype JKS -keyalg RSA -keysize 3072 -validity 10000 \
+            -alias pocket-ledger -dname "CN=Pocket Ledger" \
+            -storepass:env NEW_KEYSTORE_PASSWORD -keypass:env NEW_KEYSTORE_PASSWORD
+    artifacts:
+      - pocket-ledger-release.jks
+  android-release:
+    name: Android APK and download website
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      flutter: 3.47.9
+      java: 17
+      android_signing:
+        - pocket_ledger_release
+    scripts:
+      - name: Install locked dependencies
+        script: flutter pub get --enforce-lockfile
+      - name: Analyze and test
+        script: |
+          set -euo pipefail
+          flutter analyze
+          flutter test --reporter expanded
+          python3 -m unittest discover -s tool/tests -v
+      - name: Configure release signing
+        script: python3 tool/configure_signing.py
+      - name: Build the signed APK
+        script: |
+          set -euo pipefail
+          BUILD_CODE=$((PROJECT_BUILD_NUMBER + 1))
+          flutter build apk --release --build-number="$BUILD_CODE"
+      - name: Prepare the landing page with its real APK
+        script: |
+          set -euo pipefail
+          APP_VERSION=$(python3 -c "import re; print(re.search(r'^version: ([0-9.]+)', open('pubspec.yaml').read(), re.M).group(1))")
+          python3 tool/prepare_release.py build/app/outputs/flutter-apk/app-release.apk --version "$APP_VERSION"
+          python3 -c "import shutil; shutil.make_archive('pocket-ledger-website', 'zip', 'landing')"
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+      - pocket-ledger-website.zip
+      - landing/release.json
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ~/.gradle/caches
+  ios-unsigned-check:
+    name: iOS compilation check (not installable)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: 3.47.9
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get --enforce-lockfile
+      - name: Analyze and test
+        script: |
+          set -euo pipefail
+          flutter analyze
+          flutter test
+      - name: Compile iOS without signing
+        script: flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/iphoneos/*.app
