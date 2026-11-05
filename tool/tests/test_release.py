@@ -13,4 +13,6 @@ class ReleaseTest(unittest.TestCase):
    subprocess.run(['python3',str(SCRIPT),str(apk),'--version','1.0.0','--destination',str(p/'web')],check=True,capture_output=True)
    data=json.loads((p/'web/release.json').read_text());target=p/'web'/data['url']
    self.assertEqual(data['sha256'],hashlib.sha256(target.read_bytes()).hexdigest());self.assertEqual(data['bytes'],target.stat().st_size);self.assertTrue(data['available'])
+   js=(p/'web/release-data.js').read_text()
+   self.assertEqual(json.loads(js.removeprefix('window.PENNY_RELEASE = ').removesuffix(';\n')),data)
 if __name__=='__main__':unittest.main()

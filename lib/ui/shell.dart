@@ -1159,13 +1159,13 @@ class _LedgerShellState extends State<LedgerShell> {
       TextButton(
         onPressed: () => showLicensePage(
           context: context,
-          applicationName: 'Pocket Ledger',
+          applicationName: 'Penny',
           applicationVersion: '1.0.0',
         ),
         child: const Text('Open-source licenses'),
       ),
       const Text(
-        'Pocket Ledger · 1.0.0\nMade for a clearer everyday.',
+        'Penny · 1.0.0\nMade for a clearer everyday.',
         textAlign: TextAlign.center,
       ),
     ],
@@ -1217,7 +1217,7 @@ class _LedgerShellState extends State<LedgerShell> {
           Icon(Icons.menu_book_outlined, size: 23),
           SizedBox(width: 9),
           Text(
-            'Pocket Ledger',
+            'Penny',
             style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
           ),
         ],

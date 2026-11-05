@@ -160,7 +160,7 @@ class _PocketLedgerAppState extends State<PocketLedgerApp>
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: 'Pocket Ledger',
+    title: 'Penny',
     debugShowCheckedModeBanner: false,
     theme: ledgerTheme(false),
     darkTheme: ledgerTheme(true),
@@ -225,7 +225,7 @@ class _PocketLedgerAppState extends State<PocketLedgerApp>
                           ),
                           const SizedBox(height: 18),
                           Text(
-                            'Pocket Ledger',
+                            'Penny',
                             style: Theme.of(context).textTheme.headlineMedium
                                 ?.copyWith(
                                   color: starting ? Colors.white : null,

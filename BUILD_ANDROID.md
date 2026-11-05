@@ -1,4 +1,4 @@
-# Build Pocket Ledger in your browser
+# Build Penny in your browser
 
 This guide produces a **signed Android APK** and a **website ZIP containing the APK**. Your PC only downloads/uploads files and opens websites. The heavy work runs on Codemagic.
 
@@ -63,9 +63,9 @@ No Google Play developer account is required for this build workflow or your own
 
 Use a static host that allows APK files and supports the APK's size. The ZIP includes normal HTML/CSS/JS plus `downloads/pocket-ledger-1.0.0.apk`; it needs no PHP server, database, or backend.
 
-1. Unzip `pocket-ledger-website.zip`.
+1. Extract the **entire** `pocket-ledger-website.zip` into a folder before opening `index.html`. Opening HTML directly inside a ZIP viewer can prevent the browser from finding the stylesheet, logo, and other pages.
 2. Upload **all of its contents** to your HTTPS website's public directory. `index.html` must be at its root.
-3. Preserve `release.json` and the `downloads/` folder.
+3. Preserve `release.json`, `release-data.js`, `style.css`, `logo.png`, `privacy.html`, `release.js`, and the `downloads/` folder.
 4. Configure the host to serve `.apk` as `application/vnd.android.package-archive` or `application/octet-stream`. Do not rewrite APK requests to `index.html`.
 5. Visit your landing page and confirm the download shows the version and size. The button remains hidden if the APK cannot be found.
 6. Use that landing-page URL on your phone and press **Download Android APK**.
@@ -75,7 +75,7 @@ Some static hosts limit individual asset sizes; if the APK is too large, use ano
 ## 6. Install and test on your Android phone
 
 1. Open the downloaded APK. If Android asks, allow installation from the browser you used. Only allow installation for a file you trust.
-2. Install and open Pocket Ledger.
+2. Install and open Penny.
 3. Unlock using your device fingerprint, face recognition, or device credential.
 4. Open Settings and choose your currency **before** adding financial records.
 5. Add savings and salary, then an expense.

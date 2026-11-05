@@ -1,4 +1,4 @@
-# Pocket Ledger
+# Penny
 
 An offline Flutter expense tracker with monthly salary, editable savings, automatic rollover on the next salary, device authentication, and encrypted local storage. The companion static landing page distributes an Android APK directly.
 

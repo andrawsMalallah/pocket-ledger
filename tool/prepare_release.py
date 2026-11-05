@@ -15,4 +15,5 @@ target.parent.mkdir(parents=True,exist_ok=True)
 if a.apk.resolve()!=target.resolve(): shutil.copyfile(a.apk,target)
 metadata={'available':True,'version':a.version,'url':f'downloads/{target.name}','bytes':target.stat().st_size,'sha256':hashlib.file_digest(target.open('rb'),'sha256').hexdigest()}
 (a.destination/'release.json').write_text(json.dumps(metadata,indent=2)+'\n')
+(a.destination/'release-data.js').write_text('window.PENNY_RELEASE = '+json.dumps(metadata)+';\n')
 print(f'Release ready: {target} ({metadata["bytes"]} bytes)')
