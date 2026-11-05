@@ -28,6 +28,13 @@ workflows:
       android_signing:
         - pocket_ledger_release
     scripts:
+      - name: Select Java for Flutter and verify Gradle
+        script: |
+          set -euo pipefail
+          flutter config --jdk-dir="$JAVA_HOME"
+          "$JAVA_HOME/bin/java" -version
+          cd android
+          ./gradlew --version
       - name: Install locked dependencies
         script: flutter pub get --enforce-lockfile
       - name: Analyze and test
