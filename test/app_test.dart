@@ -4,6 +4,16 @@ import 'package:pocket_ledger/main.dart';
 import 'package:pocket_ledger/core/ledger.dart';
 import 'package:pocket_ledger/data/device_auth.dart';
 import 'package:pocket_ledger/data/store.dart';
+import 'package:pocket_ledger/data/theme_preference.dart';
+
+class MemoryThemePreference implements ThemePreference {
+  String? value;
+  MemoryThemePreference([this.value]);
+  @override
+  Future<String?> read() async => value;
+  @override
+  Future<void> write(String theme) async { value = theme; }
+}
 
 class FakeAuth implements DeviceAuth {
   bool result = true;
@@ -37,6 +47,7 @@ void main() {
     await tester.pumpWidget(
       PocketLedgerApp(
         authentication: FakeAuth(),
+        themePreference: MemoryThemePreference(),
         openStore: () async {
           opened++;
           return store;
@@ -44,8 +55,8 @@ void main() {
       ),
     );
     expect(opened, 0);
-    expect(find.text('Unlock with your device'), findsOneWidget);
-    await tester.tap(find.byIcon(Icons.fingerprint));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
     expect(opened, 1);
     await tester.tap(find.widgetWithText(OutlinedButton, 'Add salary'));
@@ -77,13 +88,15 @@ void main() {
     await tester.pumpWidget(
       PocketLedgerApp(
         authentication: auth,
+        themePreference: MemoryThemePreference(),
         openStore: () async {
           opened = true;
           return MemoryStore();
         },
       ),
     );
-    await tester.tap(find.byIcon(Icons.fingerprint));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
     expect(opened, false);
     expect(
@@ -91,14 +104,29 @@ void main() {
       findsOneWidget,
     );
   });
+  testWidgets('saved theme is applied before authentication', (tester) async {
+    final auth = FakeAuth()..result = false;
+    await tester.pumpWidget(PocketLedgerApp(
+      authentication: auth,
+      themePreference: MemoryThemePreference('dark'),
+      openStore: () async => MemoryStore(),
+    ));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+    final context = tester.element(find.text('Unlock with your device'));
+    expect(Theme.of(context).brightness, Brightness.dark);
+  });
   testWidgets('backgrounding locks an open ledger', (tester) async {
     await tester.pumpWidget(
       PocketLedgerApp(
         authentication: FakeAuth(),
+        themePreference: MemoryThemePreference(),
         openStore: () async => MemoryStore(),
       ),
     );
-    await tester.tap(find.byIcon(Icons.fingerprint));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
@@ -120,10 +148,12 @@ void main() {
     await tester.pumpWidget(
       PocketLedgerApp(
         authentication: FakeAuth(),
+        themePreference: MemoryThemePreference(),
         openStore: () async => MemoryStore(),
       ),
     );
-    await tester.tap(find.byIcon(Icons.fingerprint));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(OutlinedButton, 'Add salary'));
     await tester.pumpAndSettle();

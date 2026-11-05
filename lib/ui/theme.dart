@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 
 ThemeData ledgerTheme(bool dark) {
-  final bg = dark ? const Color(0xff191816) : const Color(0xfff6f2ea);
-  final surface = dark ? const Color(0xff25231f) : const Color(0xfffffcf7);
-  final ink = dark ? const Color(0xfff4efe7) : const Color(0xff27231f);
-  final accent = dark ? const Color(0xffe5a7b5) : const Color(0xff6b2d3d);
+  final bg = dark ? const Color(0xff000000) : const Color(0xfff8f9fd);
+  final surface = dark ? const Color(0xff18181b) : const Color(0xffffffff);
+  final ink = dark ? const Color(0xfffafafa) : const Color(0xff191c1f);
+  final accent = dark ? const Color(0xff10b981) : const Color(0xff224b3a);
   final scheme =
       ColorScheme.fromSeed(
         seedColor: accent,
         brightness: dark ? Brightness.dark : Brightness.light,
       ).copyWith(
         primary: accent,
+        onPrimary: dark ? const Color(0xff000000) : Colors.white,
+        primaryContainer: dark
+            ? const Color(0xff10b981)
+            : const Color(0xff3a6351),
+        onPrimaryContainer: dark
+            ? const Color(0xff002a1a)
+            : const Color(0xffb0ddc6),
         surface: surface,
         onSurface: ink,
+        onSurfaceVariant: dark
+            ? const Color(0xffa1a1aa)
+            : const Color(0xff414944),
         outlineVariant: dark
-            ? const Color(0xff474139)
-            : const Color(0xffded7cb),
+            ? const Color(0xff27272a)
+            : const Color(0xffc1c8c2),
       );
   final base = ThemeData(
     useMaterial3: true,
@@ -25,19 +35,23 @@ ThemeData ledgerTheme(bool dark) {
   return base.copyWith(
     textTheme: base.textTheme.copyWith(
       displaySmall: TextStyle(
-        fontFamily: 'serif',
-        fontSize: 40,
-        height: 1.12,
-        letterSpacing: -1.4,
+        fontSize: 34,
+        height: 1.16,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -.7,
         color: ink,
       ),
       headlineMedium: TextStyle(
-        fontFamily: 'serif',
-        fontSize: 30,
-        letterSpacing: -.8,
+        fontSize: 26,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -.4,
         color: ink,
       ),
-      titleLarge: TextStyle(fontFamily: 'serif', fontSize: 23, color: ink),
+      titleLarge: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: ink,
+      ),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: bg,
@@ -48,26 +62,29 @@ ThemeData ledgerTheme(bool dark) {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: surface,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
       contentPadding: const EdgeInsets.all(16),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(48, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(48, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: surface,
-      indicatorColor: accent.withValues(alpha: .12),
+      indicatorColor: accent.withValues(alpha: .14),
     ),
-    dividerTheme: DividerThemeData(color: scheme.outlineVariant, thickness: 1),
+    dividerTheme: DividerThemeData(
+      color: scheme.outlineVariant.withValues(alpha: .6),
+      thickness: 1,
+    ),
   );
 }
 
